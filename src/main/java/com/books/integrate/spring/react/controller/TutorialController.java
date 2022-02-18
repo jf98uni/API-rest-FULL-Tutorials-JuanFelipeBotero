@@ -54,7 +54,7 @@ public class TutorialController {
 
 		if (tutorialData.isPresent()) {
 			return new ResponseEntity<>(tutorialData.get(), HttpStatus.OK);
-		} else {
+		}else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
@@ -120,6 +120,54 @@ public class TutorialController {
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		}
+	}
+
+
+	// Recibe el nombre de un tuturial por parametro, lo busca y lo elimina de la base de datos
+	@DeleteMapping("/tutorials/delete/{title}")
+	public ResponseEntity<String> deleteTutorialByTitle(@PathVariable("title") String ptitulo) {
+		try {
+				for (Tutorial i : tutorialRepository.findByTitleContaining(ptitulo)){
+					if (i.getTitle().equals(ptitulo) ){
+						tutorialRepository.deleteById(i.getId());
+						return new ResponseEntity<>("Tutorial DELETE!! ",HttpStatus.NO_CONTENT);
+					}
+				}
+			return new ResponseEntity<>("Tutorial DELETE!! ",HttpStatus.NO_CONTENT);
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
+
+	// Recibe el nombre de un tuturial por parametro, lo busca y edita su descripcion y su published de la base de datos
+	@PutMapping("/tutorials/edit/{title}")
+	public ResponseEntity<Tutorial> updateTutorialByTitle(@PathVariable("title") String ptitle, @RequestBody Tutorial tutorial) {
+
+		try {
+
+		for (Tutorial i : tutorialRepository.findByTitleContaining(ptitle)){
+
+			if (i.getTitle().equals(ptitle) ){
+				Optional<Tutorial> tutorialData = tutorialRepository.findById(i.getId());
+				if (tutorialData.isPresent()) {
+					Tutorial _tutorial = tutorialData.get();
+					_tutorial.setDescription(tutorial.getDescription());
+					_tutorial.setPublished(tutorial.isPublished());
+					return new  ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+				} else {
+					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				}
+			}
+		}
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		catch (Exception e){
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		}
+
 	}
 
 }

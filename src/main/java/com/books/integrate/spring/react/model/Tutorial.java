@@ -10,6 +10,7 @@ public class Tutorial {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
+
 	@Column(name = "title")
 	private String title;
 
@@ -58,6 +59,8 @@ public class Tutorial {
 
 		this.published = isPublished;
 	}
+
+
 
 	@Override
 	public String toString() {
